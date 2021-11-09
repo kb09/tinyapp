@@ -2,11 +2,22 @@ const express = require("express");
 const app = express();
 const PORT = 8080;
 
+
+function generateRandomString() {
+
+}
+
 //Set ejs as the view engine
 
 //Getting Ready for POST Requests <-- This needs to come before all of our routes
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
+
+// We need to define the route that will match this POST
+app.post("/urls", (req, res) => {
+  console.log(req.body);  // Log the POST request body to the console
+  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+});
 
 // Add a GET Route to Show the Form
 
