@@ -42,6 +42,24 @@ app.get("/hello", (req, res) => {
 // short URL
 
 app.get("/urls/:shortURL", (req, res) => {
+  if( !urlDatabase[req.params.shortURL]){ // if a client requests a non-existent shortURL
+    let templateVars = {
+      status: 404,
+      message: ' 404  non-existent URL',
+      user: users[req.session.user_id]
+    }
+    res.status(404)
+    res.render('urls_error', templateVars)
+  }
+
+  app.post("/urls", (req, res) =>{ // What happens to the urlDatabase when the server is restarted
+    let templateVars = { 
+      status: 401,
+      message: ' must authenticate to get the requested response.',
+      user: users[req.session.user_id]
+    }
+  })
+
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]  /* What goes here? */ };
   res.render("urls_show", templateVars);
 });
@@ -60,5 +78,12 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+//Redirect Short URLs
 
+app.get("/u/:shortURL", (req, res) => {
+  
+  const longURL = urlDatabase[req.params.shortURL];
+  console.log(req.params.shortURL);  // ... Complete the code so that requests to the endpoint "/u/:shortURL" will redirect to its longURL
 
+  res.redirect(longURL);
+});
