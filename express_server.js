@@ -4,6 +4,10 @@ const PORT = 8080;
 
 //Set ejs as the view engine
 
+//Getting Ready for POST Requests <-- This needs to come before all of our routes
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
 // Add a GET Route to Show the Form
 
 app.set("view engine", "ejs");
@@ -44,5 +48,6 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
 
 
