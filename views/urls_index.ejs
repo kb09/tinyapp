@@ -17,6 +17,8 @@
         <tr>
           <th scope="col">Short URL</th>
           <th scope="col">Long URL</th>
+          <th scope="col">Delete</th>
+          </td>
         </tr>
       </thead>
       <tbody>
@@ -24,7 +26,8 @@
           <tr>
             <td><%= url %></td>
             <td><%= urls[url] %></td>
-            <td> <form method="POST" action="/urls/9sm5xK/delete">...</form> </td>
+            <td> <form method="POST" action="/urls/9sm5xK/delete"> <button type='submit' class='btn'>Delete</button>
+            </form> </td> <!-- Add delete buttons to each URL object in the index page -->
           </tr>
         <% } %>
       </tbody>
