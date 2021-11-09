@@ -4,7 +4,13 @@ const PORT = 8080;
 
 //Set ejs as the view engine
 
+// Add a GET Route to Show the Form
+
 app.set("view engine", "ejs");
+
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
 
 //Adding Routes
 
