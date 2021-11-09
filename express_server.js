@@ -6,6 +6,24 @@ const PORT = 8080;
 
 app.set("view engine", "ejs");
 
+//Adding Routes
+
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
+});
+
+//Sending HTML
+
+app.get("/hello", (req, res) => {
+  res.send("<html><body>Hello <b>World</b></body></html>\n");
+});
+
+// short URL
+
+app.get("/urls/:shortURL", (req, res) => {
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]  /* What goes here? */ };
+  res.render("urls_show", templateVars);
+});
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -21,20 +39,4 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-//Adding Routes
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-//Sending HTML
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
-//Add a route for /urls
-app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
-  res.render("urls_index", templateVars);
-});
