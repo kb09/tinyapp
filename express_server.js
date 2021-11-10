@@ -4,10 +4,37 @@ const PORT = 8080; // default port 8080
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
+const users = {  //global object called users which is used to store and access users
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
+
 //Getting Ready for POST Requests <-- This needs to come before all of our routes
 
 app.use(bodyParser.urlencoded({extended: true})); 
 app.use(cookieParser());//Add an endpoint to handle a POST to /login 
+
+const users = {
+  "userRandomID":{
+    id: "userRandomID",
+    email: "user@example.com",
+    password:"purple-monkey-dinosaur"
+  },
+
+  "user2RandomID":{
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+}
 
 //Set ejs as the view engine
 
