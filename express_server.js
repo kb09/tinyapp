@@ -2,10 +2,12 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 //Getting Ready for POST Requests <-- This needs to come before all of our routes
 
 app.use(bodyParser.urlencoded({extended: true})); 
+app.use(cookieParser());//Add an endpoint to handle a POST to /login 
 
 //Set ejs as the view engine
 
@@ -18,20 +20,32 @@ const urlDatabase = {
 
 //Adding Routes
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  // let templateVars = { urls: urlDatabase };
+  console.log(req.headers);
+  let templateVars = {
+    urls: urlDatabase,
+    username:req.cookies[username] ///Add an endpoint to handle a POST to /login 
+  }
   res.render("urls_index", templateVars);
 });
 
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  
+  let templateVars = {
+    username:req.cookies[username],
+  }
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]  /* What goes here? */ };
+  const templateVars = {shortURL: shortURL, 
+    longURL: longURL,
+     username: req.cookies["username"]};
   res.render("urls_show", templateVars);
+
   if( !urlDatabase[req.params.shortURL]){ // if a client requests a non-existent shortURL
         let templateVars = {
           status: 404,
