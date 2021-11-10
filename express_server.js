@@ -68,6 +68,16 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 
+
+//register
+app.get("/register", (req, res) =>{
+  let templateVars = {
+    username: req.cookies["username"]
+  }
+  res.render("register", templateVars);
+});
+
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls"); // redirect back to the page after deleting
@@ -86,21 +96,6 @@ app.post("/login", (req, res) =>{ //loging as user
     res.redirect("urls");
   })
 
-  //Register 
-  app.get("/register"), (req, res) =>{
-    let templateVars = {
-      username: req.cookies['username']
-    }
-    res.render("register", templateVars);
-  }
-
-
-  app.post("/register", (req, res) => {
-
-    let email = req.body.email;
-    let password= req.body.password;
-  })
-
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 }); 
@@ -111,7 +106,11 @@ app.listen(PORT, () => {
       message: ' must authenticate to get the requested response.',
       user: users[req.session.user_id],
       username: req.cookies["username"]
-    };
+    }
+  });
 
-  
+  //register
+
+  app.post("/register",(req,res) => {
+
   })
