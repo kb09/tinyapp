@@ -20,11 +20,10 @@ const urlDatabase = {
 
 //Adding Routes
 app.get("/urls", (req, res) => {
-  // let templateVars = { urls: urlDatabase };
   console.log(req.headers);
   let templateVars = {
     urls: urlDatabase,
-    username:req.cookies["username"] ///Add an endpoint to handle a POST to /login 
+    username:req.cookies["username"] //Add an endpoint to handle a POST to login 
   }
   res.render("urls_index", templateVars);
 });
