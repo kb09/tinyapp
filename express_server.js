@@ -24,7 +24,7 @@ app.get("/urls", (req, res) => {
   console.log(req.headers);
   let templateVars = {
     urls: urlDatabase,
-    username:req.cookies[username] ///Add an endpoint to handle a POST to /login 
+    username:req.cookies["username"] ///Add an endpoint to handle a POST to /login 
   }
   res.render("urls_index", templateVars);
 });
