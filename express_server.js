@@ -15,7 +15,7 @@ app.set("view engine", "ejs" );
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.ca"
+  "9sm5xK": "http://www.google.com"
 };
 
 //Adding Routes
@@ -29,15 +29,6 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-
-// app.get("/urls/new", (req, res) => {
-  
-//   let templateVars = {
-//     username:req.cookies[username],
-//   }
-//   res.render("urls_new", templateVars);
-// });
-
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
@@ -50,12 +41,15 @@ app.get("/urls/:shortURL", (req, res) => {
         let templateVars = {
           status: 404,
           message: ' 404  non-existent URL',
-          user: users[req.session.user_id]
+          user: users[req.session.user_id],
+          username: req.cookies["username"]
         }
+      }
         res.status(404)
         res.render('urls_error', templateVars)
-      }
-});
+    
+      });
+
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -80,16 +74,18 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls"); // redirect back to the page after deleting
 });
 
-app.post("/login", (req, res) =>{
+app.post("/login", (req, res) =>{ //loging as user
   res.cookie("username", req.body.username)
   res.redirect("/urls")
   let templateVars = {
     username: req.cookies["username"]}
     res.render("urls_index", templateVars);
-  }
+  });
 
-
-)
+  app.post("/logout", (req, res) => { //Logout back to homepage
+    (res.clearCookie('username', req.body.username));
+    res.redirect("urls");
+  })
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
@@ -99,6 +95,9 @@ app.listen(PORT, () => {
     let templateVars = { 
       status: 401,
       message: ' must authenticate to get the requested response.',
-      user: users[req.session.user_id]
-    }
+      user: users[req.session.user_id],
+      username: req.cookies["username"]
+    };
+
+  
   })
