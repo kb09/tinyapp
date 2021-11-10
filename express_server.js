@@ -17,24 +17,16 @@ const users = {  //global object called users which is used to store and access 
   }
 }
 
+const generateRandomString = function () {
+  return Math.random().toString(36).substr(2, 6);
+};
+
 //Getting Ready for POST Requests <-- This needs to come before all of our routes
 
 app.use(bodyParser.urlencoded({extended: true})); 
 app.use(cookieParser());//Add an endpoint to handle a POST to /login 
 
-const users = {
-  "userRandomID":{
-    id: "userRandomID",
-    email: "user@example.com",
-    password:"purple-monkey-dinosaur"
-  },
 
-  "user2RandomID":{
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  }
-}
 
 //Set ejs as the view engine
 
@@ -139,5 +131,12 @@ app.listen(PORT, () => {
   //register
 
   app.post("/register",(req,res) => {
-
-  })
+    let userEmail = req.body.email;
+    let userPassword = req.body.password;
+    let ranndomUserID= generateRandomString();
+    user[ranndomUserID]= {
+      id:ranndomUserID,
+      email: userEmail,
+      password: userPassword
+    }
+  });
