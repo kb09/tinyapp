@@ -139,4 +139,6 @@ app.listen(PORT, () => {
       email: userEmail,
       password: userPassword
     }
+    res.cookie("randomUSerID", ranndomUserID); //set a user_id cookie containing the user's newly generated ID
+    res.redirect("/urls")//Redirect the user to the /urls page.
   });
