@@ -22,11 +22,20 @@ const generateRandomString = function () {
   return Math.random().toString(36).substr(2, 6);
 };
 
-const user = { 
-  "userRandomID":{
-    id:"userRandomID"
+// const user = { 
+//   "userRandomID":{
+//     id:"userRandomID"
+//   }
+// }
+
+const cookiesEmail = (eamilSearch) =>{ // <--- might have to change randomUserID
+  for (let randomUserID in users) {
+    if (users[randomUserID].email === cookiesEmail) {
+      return users[randomUserID];
+    }
   }
-}
+};
+
 
 //Getting Ready for POST Requests <-- This needs to come before all of our routes
 
@@ -60,8 +69,11 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: shortURL, 
     longURL: longURL,
-     username: req.cookies["username"]};
+    user:user
+    //  username: req.cookies["username"]};
+  };  
   res.render("urls_show", templateVars);
+
 
   if( !urlDatabase[req.params.shortURL]){ // if a client requests a non-existent shortURL
         let templateVars = {
@@ -102,12 +114,13 @@ app.get("/register", (req, res) =>{
 });
 
 app.get("/register", (req, res) => {
-  let users = users[req.cookies["user_id"]]
+  let users = users[req.cookies["user_id"]];
   let templateVars = {
     user:user
-  }
-  res.render(".", templateVars)
+  };
+  res.render(".", templateVars);
 });
+
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
@@ -142,29 +155,33 @@ app.listen(PORT, () => {
 
   app.post("/register",(req,res) => {
     
-    if (!req.body.email || !req.body.password){
-      res.status(400).send("Missing Email or Password input(s)");
-    } 
-
-
+    let user = cookiesEmail(req.body.email);
+  
+    if (!req.body.email || !req.body.password) {//If the e-mail or password are empty strings, send back a response with the 400 status code
+      res.status(400).send("Error 400: Missing Email or Password input(s)");
+    } else if (!user) {
+      res.status(409).send("Error 409: Email already registered"
+      );
+    }
+  
     let userEmail = req.body.email;
     let userPassword = req.body.password;
-    let ranndomUserID= generateRandomString();
-    user[ranndomUserID]= {
+    let ranndomUserID = generateRandomString();
+    user[ranndomUserID] = {
       id:ranndomUserID,
       email: userEmail,
       password: userPassword
-    }
-    res.cookie("randomUSerID", ranndomUserID); //set a user_id cookie containing the user's newly generated ID
-    console.log(res.cookie)
-    res.redirect("/urls")//Redirect the user to the /urls page.
+    };
+    res.cookie("randomUserID", ranndomUserID); //set a user_id cookie containing the user's newly generated ID
+    console.log(res.cookie);
+    res.redirect("/urls");//Redirect the user to the /urls page.
   });
-
-
-
-
-
-
-
-
-  module.exports= { urlDatabase, users, generateRandomString }
+  
+  
+  
+  
+  
+  
+  
+  module.exports = { urlDatabase, users, generateRandomString };
+  
