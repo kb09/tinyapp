@@ -3,7 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const {validateInformation} = require("./helper")
+// const {validateInformation} = require("./helper")
 
 const users = {  //global object called users which is used to store and access users
   "userRandomID": {
@@ -101,6 +101,13 @@ app.get("/register", (req, res) =>{
   res.render("register", templateVars);
 });
 
+app.get("/register", (req, res) => {
+  let users = users[req.cookies["user_id"]]
+  let templateVars = {
+    user:user
+  }
+  res.render(".", templateVars)
+});
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
@@ -134,6 +141,12 @@ app.listen(PORT, () => {
   });
 
   app.post("/register",(req,res) => {
+    
+    if (!req.body.email || !req.body.password){
+      res.status(400).send("Missing Email or Password input(s)");
+    } 
+
+
     let userEmail = req.body.email;
     let userPassword = req.body.password;
     let ranndomUserID= generateRandomString();
@@ -147,11 +160,7 @@ app.listen(PORT, () => {
     res.redirect("/urls")//Redirect the user to the /urls page.
   });
 
-  app.post("/.register", (req, res) => {
-    if (req.body.email === "" || req.body.password === ""){
-      res.status(400).send("Missing Email or Password input(s)");
-    }
-  })
+
 
 
 
