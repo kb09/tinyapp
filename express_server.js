@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const {validateInformation} = require("./helper")
 
 const users = {  //global object called users which is used to store and access users
   "userRandomID": {
@@ -20,6 +21,12 @@ const users = {  //global object called users which is used to store and access 
 const generateRandomString = function () {
   return Math.random().toString(36).substr(2, 6);
 };
+
+const user = { 
+  "userRandomID":{
+    id:"userRandomID"
+  }
+}
 
 //Getting Ready for POST Requests <-- This needs to come before all of our routes
 
@@ -50,7 +57,8 @@ app.get("/urls", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
-  const templateVars = {shortURL: shortURL, 
+  const templateVars = {
+    shortURL: shortURL, 
     longURL: longURL,
      username: req.cookies["username"]};
   res.render("urls_show", templateVars);
@@ -86,9 +94,6 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-
-
-//register
 app.get("/register", (req, res) =>{
   let templateVars = {
     username: req.cookies["username"]
@@ -128,8 +133,6 @@ app.listen(PORT, () => {
     }
   });
 
-  //register
-
   app.post("/register",(req,res) => {
     let userEmail = req.body.email;
     let userPassword = req.body.password;
@@ -140,5 +143,19 @@ app.listen(PORT, () => {
       password: userPassword
     }
     res.cookie("randomUSerID", ranndomUserID); //set a user_id cookie containing the user's newly generated ID
+    console.log(res.cookie)
     res.redirect("/urls")//Redirect the user to the /urls page.
   });
+
+  app.post("/.register", (req, res) => {
+    if (req.body.email === "" || req.body.password === ""){
+      res.status(400).send("Missing Email or Password input(s)");
+    }
+  })
+
+
+
+
+
+
+  module.exports= { urlDatabase, users, generateRandomString }
