@@ -1,14 +1,24 @@
-const {users} = require("./express_server");
+const urlsForUser = function(urlDB, id) {
+  let newDB = {};
+  for (const i in urlDB) {
+    if (urlDB[i].userID === id) {
+      newDB[i] = urlDB[i];
+    }
+  }
+  return newDB;
+};
 
-/*If the e-mail or password are empty strings, send back
-a response with the 400 status code.*/
-// const validateInformation = (email, password) => {
-//   if ( users.email === "" || users.password === ""){
-//     return ' 404  missing email or password'
-//     }
-    
+function generateRandomString() {
+  return Math.random().toString(36).substring(2, 8);
+}
 
+const getUserByEmail = function(usersDB, inputEmail) {
+  for (const user in usersDB) {
+    if (usersDB[user].email === inputEmail) {
+      return usersDB[user];
+    }
+  }
+  
+};
 
-
-
-module.exports = {validateInformation};
+module.exports = { urlsForUser, generateRandomString, getUserByEmail };
