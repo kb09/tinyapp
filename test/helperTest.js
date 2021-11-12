@@ -19,10 +19,9 @@ describe('getUserByEmail', function() {
   it('should return a user with valid email', function() {
     const user = getUserByEmail("user@example.com", testUsers)
     const expectedUserID = "userRandomID";
-    // Write your assert statement here
   });
 
-  it('should return undefined if email is not in the dataset', function() {
+  it('should return undefined if email is not included in the data', function() {
     const user = getUserByEmail(testUsers, '123@hotmail.com');
     const expectedOutput = undefined;
     assert.equal(user, expectedOutput);

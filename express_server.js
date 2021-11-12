@@ -25,27 +25,14 @@ const urlDatabase = {
   },
 };
 
-// const urlsForUser = function (urlDB, id) {
-//   let newDB = {};
-//   for (const i in urlDB) { //√          // in helper
-//     if (urlDB[i].userID === id) {
-//       newDB[i] = urlDB[i];
-//     }
-//   }
-//   return newDB;
-// };
 
-const usersDB = {}; //√
-
-// //Random string (6 characters)
-// function generateRandomString() {
-//   return Math.random().toString(36).substring(2, 8); in helper
-// };
+const userData = {}; 
 
 //register
 app.get('/register', (req, res) => {
   const templateVars = { email: undefined };
   res.render('urls_register', templateVars);
+  
 });
 
 //validate user information
@@ -55,8 +42,8 @@ app.post('/register', (req, res) => {
   }
 
   //validate Email
-  for (const user in usersDB) {
-    if (usersDB[user].email === req.body.email) {
+  for (const user in userData) {
+    if (userData[user].email === req.body.email) {
       return res.status(422).send('Error 422 unprocessable entity, Email already in use ');
     }
   }
@@ -69,7 +56,7 @@ app.post('/register', (req, res) => {
   };
   req.session['user_id'] = newUser['id'];
   const key = newUser["id"];
-  usersDB[key] = newUser;
+  userData[key] = newUser;
   res.redirect('/urls');
 });
 
@@ -77,7 +64,7 @@ app.post('/register', (req, res) => {
 //login
 app.get('/login', (req, res) => {
   const templateVars = {
-    email: usersDB[req.session['user_id']]
+    email: userData[req.session['user_id']]
   };
   res.render('urls_login', templateVars);
 });
@@ -87,16 +74,16 @@ app.post('/login', (req, res) => {
   if (req.body.email === '' || req.body.password === '') {
     res.status(406).send('Error 406, missing input ');
   }
-  for (const user in usersDB) {
-    if (usersDB[user].email !== req.body.email) { // wrong email
+  for (const user in userData) {
+    if (userData[user].email !== req.body.email) { // wrong email
       return res.status(417).send('Eror 417, invalid email');
     }
-    if (usersDB[user].email === req.body.email) {
-      if (!(bcryptjs.compareSync(req.body.password, usersDB[user].password))) { // wrong password
+    if (userData[user].email === req.body.email) {
+      if (!(bcryptjs.compareSync(req.body.password, userData[user].password))) { // wrong password
         return res.status(417).send('Eror 417, invalid password');
       }
-      if (bcryptjs.compareSync(req.body.password, usersDB[user].password) && usersDB[user].email === req.body.email) {
-        req.session['user_id'] = usersDB[user]["id"];
+      if (bcryptjs.compareSync(req.body.password, userData[user].password) && userData[user].email === req.body.email) {
+        req.session['user_id'] = userData[user]["id"];
         return res.redirect('/urls');
       }
     }
@@ -104,13 +91,8 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
   
 });
-// app.post('/urls/:id', (req, res) => {
-//   for (const user in usersDB) {
 
-//   }
-
-// });
-
+  
 //logout and clear cookies
 app.post('/logout', (req, res) => {
   req.session = null;
@@ -124,11 +106,19 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls"); // redirect back to the page after deleting
+
+  const urlToDelete = req.params.shortURL;
+  const userident = req.session.id;
+
+  if (urlDatabase[urlToDelete].userID !== userident) { 
+    res.redirect('/no_permissions');
+    return;
+  }
 });
 
 
 app.post('/urls/:shortURL/edit', (req, res) => {
-  let uniqueID = usersDB[req.session['user_id']].id;
+  let uniqueID = userData[req.session['user_id']].id;
   if (urlDatabase[req.params.shortURL].userID === uniqueID) {
     urlDatabase[req.params.shortURL].longURL = req.body.editURL;
     res.redirect('/urls');
@@ -139,7 +129,7 @@ app.post('/urls/:shortURL/edit', (req, res) => {
 //validate urls
 
 app.get('/urls', (req, res) => {
-  const user = usersDB[req.session['user_id']];
+  const user = userData[req.session['user_id']];
   if (!user) {
     const templateVars = {
       email: undefined,
@@ -147,7 +137,7 @@ app.get('/urls', (req, res) => {
     res.status(403).send('Error 403 must sign in'); // error if not signed in
   } else {
     let emailPass = user.email;
-    const moreData = urlsForUser(urlDatabase, usersDB[req.session['user_id']].id);
+    const moreData = urlsForUser(urlDatabase, userData[req.session['user_id']].id);
     const templateVars = {
       urls: moreData,
       email: emailPass,
@@ -158,7 +148,7 @@ app.get('/urls', (req, res) => {
 
 // urls_new
 app.get('/urls/new', (req, res) => {
-  const user = usersDB[req.session['user_id']];
+  const user = userData[req.session['user_id']];
   if (!user) {
     res.redirect('/login'); // when not signed in, redirect to login, redirecting to urls will display error if not singed in
   } else {
@@ -169,7 +159,7 @@ app.get('/urls/new', (req, res) => {
 
 app.post('/urls', (req, res) => {
   const randomShortURL = generateRandomString();
-  const user = usersDB[req.session['user_id']];
+  const user = userData[req.session['user_id']];
 
   urlDatabase[randomShortURL] = {
     longURL: req.body.longURL,
@@ -179,7 +169,7 @@ app.post('/urls', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  let user = usersDB[req.session['user_id']];
+  let user = userData[req.session['user_id']];
   if (!user) {
     const templateVars = {
       urls: urlDatabase,
@@ -203,7 +193,7 @@ app.post('/urls/:shortURL', (req, res) => {
     const shortURL = req.params.shortURL;
     return res.redirect(`/urls/${shortURL}`);
   } else {
-    const user = usersDB[req.session['user_id']];
+    const user = userData[req.session['user_id']];
     urlDatabase[req.params.shortURL] = {
       longURL: req.body.editURL,
       userID: user.id,
@@ -224,7 +214,7 @@ app.get('/urls.json', (req, res) => {
 
 
 app.get('/', (req, res) => {
-  let user = usersDB[req.session['user_id']];
+  let user = userData[req.session['user_id']];
   if (!user) {  // if user is not logged in redirect to /login
 
     res.redirect('/login');
