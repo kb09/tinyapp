@@ -1,3 +1,4 @@
+
 const urlsForUser = function(urlDB, id) {
   let newData = {};
   for (const i in urlDB) {
@@ -8,10 +9,12 @@ const urlsForUser = function(urlDB, id) {
   return newData;
 };
 
+// random string generator 
 function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 }
 
+//Getting email for the user 
 const getUserByEmail = function(userData, inputEmail) {
   for (const user in userData) {
     if (userData[user].email === inputEmail) {
