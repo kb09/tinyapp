@@ -170,48 +170,55 @@ app.post('/urls', (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   let user = userData[req.session['user_id']];
-  if (!user) {
-    const templateVars = {
-      urls: urlDatabase,
-      email: undefined
-    };
-    return res.render('urls_index', templateVars);
-  } else {
+    if (!user) {
+    return res.send('Error, need to sign in to view shortURL');
+  } 
+  else {
     let emailPass = user.email;
     const templateVars = {
       shortURL: req.params.shortURL,
       longURL: urlDatabase[req.params.shortURL].longURL,
       email: emailPass,
     };
-  
     res.render('urls_show', templateVars);
   }
 });
 
-app.post('/urls/:shortURL', (req, res) => {
-  if (!req.body.editURL) {
-    const shortURL = req.params.shortURL;
-    return res.redirect(`/urls/${shortURL}`);
-  } else {
-    const user = userData[req.session['user_id']];
-    urlDatabase[req.params.shortURL] = {
-      longURL: req.body.editURL,
-      userID: user.id,
-    };
-    return res.redirect('/urls');
+
+app.post("/urls/:shortURL", (req, res) => {
+  let found = false;
+  if (request.session.user_id) {
+    for (let i in urlDataBase[request.session.user_id])
+    if (i === request.params.shortURL)
+    found = true;
+    if (found)
+    {
+      delete urlDataBase[request.session.user_id][request.params.shortURL];
+      response.redirect("/urls");
+    }
+    else
+      response.status(400).send("Cannt find URL to delete :(");
   }
+  else
+    response.status(400).send("You cant delete if you are not logged in");
 });
 
+app.get("/u/:shortURL", (req, res) => {
 
-app.get('/u/:shortURL', (req, res) => {
-  const longestURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longestURL);
+  let longURL;
+  for (let userID in urlDataBase)
+  {
+    for (let shortUrl in urlDataBase[userID])
+    {
+      if (shortUrl === req.params.shortURL)
+        longURL = urlDataBase[userID][shortUrl];
+    }
+  }
+  if (longURL)
+    res.redirect(longURL);
+  else
+    res.status(400).send("Error 400 shortURL doesn't exist");
 });
-
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
-});
-
 
 app.get('/', (req, res) => {
   let user = userData[req.session['user_id']];
