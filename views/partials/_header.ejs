@@ -4,35 +4,29 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
+    </div>
+    <% if(user) { %>
+      <form class="d-flex" method="POST" action="/logout">
+        <h7 class="my-2">Logged In As: <%= user.email %> </h7>
+        <button class="btn btn-outline-primary mx-3" type="submit">Logout</button>
+      </form>
+    <% } else { %>
+      <div class="navbar-nav">
+        <ul class="nav justify-content-end">
+          <li class="nav-item">
+            <a class="nav-link " class="btn btn-outline-light" href="/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="/register" class="btn btn-outline-light">Register</a>
+          </li>
+        </ul>
+      </div>
 
-
-      <% if (email === undefined) { %>
-        <form class="form-inline" action="/login" method="get">
-          <div>
-          <button style="margin-left: 50em;"" type="submit" class="btn btn-outline-light" >Login</button>
-          </div>
-        </form>
-
-        <form class="form-inline" action="/register" method="get">
-          <div>
-          <button style="margin-left: 1em;" type="submit" class="btn btn-outline-light"
-          ">Register</button>
-          </div>
-        </form>
-
-      <% } %>
-      
-      <% if (email) { %>
-        <div type="text" style="margin-left: 40em;">Logged in as: <%= email %></div>
-        <form class="form-inline" action="/logout" method="POST">
-        <button style="margin-left: 1em;" type="logout" class="btn btn-outline-dark">Logout</button></form>
-      <% } %>
-  </div>
+    <% } %>
   </nav>
 </header>

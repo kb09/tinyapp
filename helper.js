@@ -1,31 +1,34 @@
-
-const urlsForUser = function(urlDB, id) {
-  let newData = {};
-  for (const i in urlDB) {
-    if (urlDB[i].userID === id) {
-      newData[i] = urlDB[i];
+const urlsForUser = function(id, db) {
+  let obj = {};
+  for (let key in db) {
+    if (db[key]["userID"] === id) {
+      obj[key] = db[key];
     }
   }
-  return newData;
+  return obj;
 };
 
 // random string generator 
-function generateRandomString() {
-  return Math.random().toString(36).substring(2, 8);
-}
-
-//Getting email for the user 
-const getUserByEmail = function(userData, inputEmail) {
-  for (const user in userData) {
-    if (userData[user].email === inputEmail) {
-      return userData[user];
-    }
+const generateRandomString = function() {
+  let randomChars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < 6; i++) {
+    result += randomChars.charAt(
+      Math.floor(Math.random() * randomChars.length)
+    );
   }
-  
+  return result;
 };
 
-
-
+//Getting email for the user 
+const getUserByEmail = function(email, db) {
+  for (let user in db) {
+    if (db[user]["email"] === email) {
+      return db[user];
+    }
+  }
+};
 
 
 module.exports = { urlsForUser, generateRandomString, getUserByEmail };
